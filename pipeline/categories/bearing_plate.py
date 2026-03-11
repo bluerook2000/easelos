@@ -11,22 +11,12 @@ from pipeline.part_base import PartGenerator, PartParams, HoleSpec, METRIC_CLEAR
 BEARING_SPECS = {
     "608_mount": {
         "bore_mm": 22.0,
-        "plate_sizes": [(40, 40), (50, 50), (60, 60)],
-        "mount_holes": ["M4", "M5"],
+        "plate_sizes": [(40, 40), (45, 45), (50, 50), (55, 55), (60, 60)],
+        "mount_holes": ["M4", "M5", "M6"],
     },
     "6201_mount": {
         "bore_mm": 32.0,
-        "plate_sizes": [(50, 50), (60, 60), (70, 70)],
-        "mount_holes": ["M5", "M6"],
-    },
-    "6202_mount": {
-        "bore_mm": 35.0,
-        "plate_sizes": [(55, 55), (65, 65), (75, 75)],
-        "mount_holes": ["M5", "M6"],
-    },
-    "6203_mount": {
-        "bore_mm": 40.0,
-        "plate_sizes": [(60, 60), (70, 70), (80, 80)],
+        "plate_sizes": [(50, 50), (55, 55), (60, 60), (65, 65), (70, 70)],
         "mount_holes": ["M5", "M6"],
     },
 }

@@ -1,7 +1,6 @@
 # pipeline/exporter.py
 """Export CadQuery solids to STEP, SVG, DXF, and PNG."""
 import os
-from pathlib import Path
 
 import cadquery as cq
 import ezdxf

@@ -1,6 +1,6 @@
 # tests/test_exporter.py
 import os
-import tempfile
+import pytest
 import cadquery as cq
 from pipeline.exporter import export_step, export_svg, export_dxf, export_png
 
@@ -16,6 +16,22 @@ def _make_test_solid(thickness: float = 3.0) -> cq.Workplane:
         .pushPoints([(15, 0), (-15, 0)])
         .hole(5.0)
     )
+
+
+def _has_png_backend() -> bool:
+    """Check if cairosvg or svglib+reportlab is available."""
+    try:
+        import cairosvg
+        return True
+    except ImportError:
+        pass
+    try:
+        from svglib.svglib import svg2rlg
+        from reportlab.graphics import renderPM
+        return True
+    except ImportError:
+        pass
+    return False
 
 
 class TestStepExport:
@@ -76,6 +92,10 @@ class TestDxfExport:
 
 
 class TestPngExport:
+    @pytest.mark.skipif(
+        not _has_png_backend(),
+        reason="PNG export requires cairosvg or svglib+reportlab",
+    )
     def test_creates_file(self, tmp_path):
         solid = _make_test_solid()
         svg_path = tmp_path / "test.svg"

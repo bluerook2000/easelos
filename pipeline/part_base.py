@@ -1,9 +1,10 @@
 # pipeline/part_base.py
 """Base class for parametric part generators."""
+import hashlib
 import json
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Iterator
 
 import cadquery as cq
@@ -50,7 +51,30 @@ class PartParams:
 
     @property
     def part_id(self) -> str:
-        hole_label = f"{len(self.hole_specs)}x{self.hole_specs[0].label}" if self.hole_specs else "no-holes"
+        if self.hole_specs:
+            # Build label counts sorted alphabetically to encode all hole types
+            label_counts: dict[str, int] = {}
+            for h in self.hole_specs:
+                label_counts[h.label] = label_counts.get(h.label, 0) + 1
+            # Sort labels for determinism, join as "2xM5+2xM6"
+            parts = []
+            for label in sorted(label_counts.keys()):
+                parts.append(f"{label_counts[label]}x{label}")
+            hole_label = "+".join(parts)
+
+            # When multiple distinct hole labels exist, append a short hash
+            # of the full hole layout to disambiguate parts with the same
+            # label counts but different hole placements.
+            unique_labels = set(label_counts.keys())
+            if len(unique_labels) > 1:
+                canonical = json.dumps(
+                    [(h.label, h.diameter_mm, h.x_mm, h.y_mm) for h in self.hole_specs],
+                    separators=(",", ":"),
+                )
+                suffix = hashlib.sha256(canonical.encode()).hexdigest()[:4]
+                hole_label = f"{hole_label}-{suffix}"
+        else:
+            hole_label = "no-holes"
         return (
             f"{self.category}-{self.shape}-"
             f"{self.width_mm:.0f}x{self.height_mm:.0f}x{self.thickness_mm}-"

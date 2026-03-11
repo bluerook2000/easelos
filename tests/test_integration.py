@@ -83,7 +83,7 @@ def test_total_variant_count():
 
 
 def test_metadata_schema(tmp_path):
-    """Verify JSON metadata has all required fields for one part."""
+    """Verify JSON metadata has all 19 required fields for one part."""
     gen = ALL_GENERATORS[0]
     params = next(gen.enumerate_variants())
 
@@ -101,17 +101,26 @@ def test_metadata_schema(tmp_path):
         material_slug=params.material_slug,
     )
 
-    for field in ["part_id", "category", "name", "description", "width_mm",
-                  "height_mm", "thickness_mm", "hole_count", "hole_specs",
-                  "material", "weight_estimate_g", "complexity", "size_category",
-                  "pricing", "files"]:
+    # All 19 required fields
+    required_fields = [
+        "part_id", "category", "name", "description",
+        "width_mm", "height_mm", "thickness_mm",
+        "width_in", "height_in", "area_sq_in",
+        "hole_count", "hole_specs",
+        "material", "material_name",
+        "weight_estimate_g", "complexity", "size_category",
+        "pricing", "files",
+    ]
+    for field in required_fields:
         assert field in meta, f"Missing: {field}"
 
+    # Pricing for 3 materials x 6 quantities
     for mat in ["aluminum", "steel", "stainless"]:
         assert mat in meta["pricing"]
         for qty in [1, 10, 100, 500, 1000, 10000]:
             assert qty in meta["pricing"][mat]
 
+    # JSON serializable
     json.dumps(meta)
 
 
