@@ -1,0 +1,7 @@
+data/catalog.db
+public/parts
+public/search-index.json
+.next/
+out/
+node_modules/
+caddy.log
