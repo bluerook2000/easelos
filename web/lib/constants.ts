@@ -80,17 +80,17 @@ export const MATERIAL_LABELS: Record<string, string> = {
   aluminum: '5052-H32 Aluminum',
   steel: 'A1011 Carbon Steel',
   stainless: '304 Stainless Steel',
-  brass: 'C260 Brass',
-  copper: 'C110 Copper',
+  aluminum_6061: '6061-T6 Aluminum',
+  steel_4140: '4140 Alloy Steel',
   titanium: 'Grade 2 Titanium',
-  galvanized: 'Galvanized Steel',
-  spring_steel: '1095 Spring Steel',
+  brass: '360 Brass',
+  copper: '110 Copper',
   acrylic: 'Cast Acrylic',
-  delrin: 'Delrin (POM)',
+  delrin: 'Delrin (Acetal)',
   nylon: 'Nylon 6/6',
   polycarbonate: 'Polycarbonate',
   hdpe: 'HDPE',
-  abs: 'ABS',
+  uhmwpe: 'UHMW-PE',
 };
 
 export const MANUFACTURING_TYPE_LABELS: Record<string, string> = {

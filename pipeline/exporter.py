@@ -166,7 +166,6 @@ def export_glb(solid: cq.Workplane, path: str) -> bool:
 
     bin_data = bytes(idx_data) + bytes(vert_data)
     idx_byte_len = len(idx_data)
-    vert_byte_len = len(vert_data)
 
     num_vertices = len(vertices)
     num_indices = len(triangles) * 3
@@ -190,7 +189,7 @@ def export_glb(solid: cq.Workplane, path: str) -> bool:
                 "componentType": 5125 if use_uint32 else 5123,  # UNSIGNED_INT or UNSIGNED_SHORT
                 "count": num_indices,
                 "type": "SCALAR",
-                "max": [num_indices - 1],
+                "max": [num_vertices - 1],
                 "min": [0],
             },
             {
