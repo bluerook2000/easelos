@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/vendor/'],
+      disallow: ['/vendor/', '/admin/', '/auth/', '/api/'],
     },
     sitemap: 'https://easelos.com/sitemap.xml',
   };

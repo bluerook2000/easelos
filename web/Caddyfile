@@ -1,21 +1,11 @@
 :8099 {
-  root * /Users/redventra/easelos/web/out
-  file_server
-  try_files {path} {path}/ /404.html
+  reverse_proxy localhost:3000
 
   header {
     X-Content-Type-Options nosniff
     X-Frame-Options DENY
     Referrer-Policy strict-origin-when-cross-origin
   }
-
-  # Cache static assets aggressively
-  @static path *.svg *.png *.step *.dxf *.css *.js *.json
-  header @static Cache-Control "public, max-age=604800, immutable"
-
-  # HTML pages get short cache for rebuilds
-  @html path *.html
-  header @html Cache-Control "public, max-age=300"
 
   # Gzip compression
   encode gzip

@@ -8,7 +8,6 @@ import PartSpecs from '@/components/PartSpecs';
 import PartCard from '@/components/PartCard';
 import BreadcrumbNav from '@/components/BreadcrumbNav';
 import { CATEGORY_NAMES } from '@/lib/constants';
-import Link from 'next/link';
 
 interface PageProps {
   params: { category: string; partId: string };
@@ -134,14 +133,14 @@ export default function PartDetailPage({ params }: PageProps) {
 
             {/* Vendor CTA */}
             <div className="mt-8">
-              <Link
-                href="/vendor/register/"
+              <a
+                href={`/api/vendor/interest?part_id=${part.part_id}&category=${part.category}`}
                 className="inline-flex items-center rounded-md bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
               >
                 I Can Make This
-              </Link>
+              </a>
               <p className="mt-2 text-xs text-gray-500">
-                Are you a manufacturer? Register as a vendor.
+                Are you a manufacturer? Register to express interest.
               </p>
             </div>
           </div>
