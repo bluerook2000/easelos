@@ -16,8 +16,11 @@ export default function GrowthChart({ data, width = 600, height = 200 }: GrowthC
   const chartH = height - padding.top - padding.bottom;
 
   const maxParts = Math.max(...data.map((d) => d.total_parts));
+  if (maxParts === 0) {
+    return <p className="text-sm text-gray-500">No parts data yet.</p>;
+  }
   const yScale = chartH / (maxParts * 1.1);
-  const xStep = data.length > 1 ? chartW / (data.length - 1) : chartW;
+  const xStep = data.length > 1 ? chartW / (data.length - 1) : 0;
 
   const points = data.map((d, i) => ({
     x: padding.left + i * xStep,

@@ -8,7 +8,7 @@ export function generatePartTitle(part: Part): string {
   const holes = part.hole_count > 0
     ? ` ${part.hole_count}-Hole`
     : '';
-  return `${part.material_name} ${partType} ${specs}${holes} | Laser Cut | Easelos`;
+  return `${materialShort} ${partType} ${specs}${holes} | Laser Cut | Easelos`;
 }
 
 export function generatePartDescription(part: Part): string {

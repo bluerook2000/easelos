@@ -51,11 +51,3 @@ export interface GrowthEntry {
   total_parts: number;
   by_category: Record<string, number>;
 }
-
-export interface SearchIndexEntry {
-  part_id: string;
-  category: string;
-  name: string;
-  material: string;
-  keywords: string;
-}

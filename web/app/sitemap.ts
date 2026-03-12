@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/search`,
+      url: `${baseUrl}/search/`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.5,
@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     for (const cat of categories) {
       entries.push({
-        url: `${baseUrl}/parts/${cat.slug}`,
+        url: `${baseUrl}/parts/${cat.slug}/`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.8,
@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const parts = getPartsByCategory(db, cat.slug);
       for (const part of parts) {
         entries.push({
-          url: `${baseUrl}/parts/${part.category}/${part.part_id}`,
+          url: `${baseUrl}/parts/${part.category}/${part.part_id}/`,
           lastModified: new Date(),
           changeFrequency: 'weekly',
           priority: 0.6,
