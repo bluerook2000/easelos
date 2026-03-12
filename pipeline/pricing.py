@@ -51,8 +51,27 @@ def get_all_prices(
     hole_count: int,
     width_in: float,
     height_in: float,
+    material_multiplier: float = 1.0,
+    process_multiplier: float = 1.0,
 ) -> dict[int, float]:
-    """Get prices for all quantity tiers given part specs."""
+    """Get prices for all quantity tiers given part specs.
+
+    Args:
+        material_multiplier: Multiplier for material cost (e.g., 4.0 for titanium).
+        process_multiplier: Multiplier for manufacturing process (e.g., 2.5 for CNC).
+    """
     complexity = get_complexity(hole_count)
     size = get_size_category(width_in, height_in)
-    return {qty: _PRICE_MATRIX[complexity][size][qty] for qty in QUANTITY_TIERS}
+    combined = material_multiplier * process_multiplier
+    return {
+        qty: round(_PRICE_MATRIX[complexity][size][qty] * combined, 2)
+        for qty in QUANTITY_TIERS
+    }
+
+
+# Process multipliers for non-laser-cut manufacturing
+PROCESS_MULTIPLIERS: dict[str, float] = {
+    "laser_cut": 1.0,
+    "cnc_milled": 2.5,
+    "sheet_metal": 1.5,
+}

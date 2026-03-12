@@ -7,7 +7,8 @@ import DownloadButtons from '@/components/DownloadButtons';
 import PartSpecs from '@/components/PartSpecs';
 import PartCard from '@/components/PartCard';
 import BreadcrumbNav from '@/components/BreadcrumbNav';
-import { CATEGORY_NAMES } from '@/lib/constants';
+import ModelViewer from '@/components/ModelViewer';
+import { CATEGORY_NAMES, MANUFACTURING_TYPE_LABELS } from '@/lib/constants';
 
 interface PageProps {
   params: { category: string; partId: string };
@@ -56,6 +57,8 @@ export default function PartDetailPage({ params }: PageProps) {
   const categoryName = CATEGORY_NAMES[part.category] || part.category;
   const jsonLd = generateProductJsonLd(part);
   const relatedParts = getRelatedParts(db, part, 4);
+  const has3dModel = !!part.files.glb;
+  const mfgLabel = MANUFACTURING_TYPE_LABELS[part.manufacturing_type] || 'Laser Cut';
 
   return (
     <>
@@ -75,16 +78,24 @@ export default function PartDetailPage({ params }: PageProps) {
 
         {/* Main content */}
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* Left: SVG preview */}
+          {/* Left: Preview */}
           <div>
-            <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/parts/${part.category}/${part.part_id}/profile.svg`}
+            {has3dModel ? (
+              <ModelViewer
+                glbUrl={`/parts/${part.category}/${part.part_id}/${part.files.glb}`}
+                fallbackSvgUrl={`/parts/${part.category}/${part.part_id}/profile.svg`}
                 alt={part.name}
-                className="max-h-80 w-full object-contain"
               />
-            </div>
+            ) : (
+              <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 p-8">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/parts/${part.category}/${part.part_id}/profile.svg`}
+                  alt={part.name}
+                  className="max-h-80 w-full object-contain"
+                />
+              </div>
+            )}
 
             {/* Downloads */}
             <div className="mt-6">
@@ -92,8 +103,11 @@ export default function PartDetailPage({ params }: PageProps) {
               <DownloadButtons category={part.category} partId={part.part_id} />
             </div>
 
-            {/* Order on Ponoko */}
-            <div className="mt-4">
+            {/* Manufacturing badge + Order link */}
+            <div className="mt-4 flex items-center gap-3">
+              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                {mfgLabel}
+              </span>
               <a
                 href="https://www.ponoko.com/laser-cutting"
                 target="_blank"

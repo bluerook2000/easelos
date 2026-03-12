@@ -103,6 +103,7 @@ class PartGenerator(ABC):
     """Base class for a part category generator."""
 
     category: str = ""
+    manufacturing_type: str = "laser_cut"  # "laser_cut", "cnc_milled", "sheet_metal"
 
     @abstractmethod
     def generate_solid(self, params: PartParams) -> cq.Workplane:
@@ -162,6 +163,12 @@ class PartGenerator(ABC):
             except RuntimeError:
                 pass  # PNG is best-effort
 
+            # Export glTF for 3D parts
+            if self.manufacturing_type in ("cnc_milled", "sheet_metal"):
+                from pipeline.exporter import export_glb
+                glb_path = os.path.join(part_dir, "model.glb")
+                export_glb(solid, glb_path)  # best-effort
+
             # Generate metadata
             hole_spec_dicts = [
                 {"size": h.label, "diameter_mm": h.diameter_mm, "x_mm": h.x_mm, "y_mm": h.y_mm}
@@ -178,6 +185,7 @@ class PartGenerator(ABC):
                 hole_count=params.hole_count,
                 hole_specs=hole_spec_dicts,
                 material_slug=params.material_slug,
+                manufacturing_type=self.manufacturing_type,
             )
             with open(meta_path, "w") as f:
                 json.dump(meta, f, indent=2)

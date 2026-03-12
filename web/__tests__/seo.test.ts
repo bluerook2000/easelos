@@ -7,6 +7,7 @@ const testPart: Part = {
   category: 'mounting_bracket',
   name: '5052-H32 Aluminum Flat Bracket 30x20mm 4xM5',
   description: 'Laser-cut flat mounting bracket.',
+  manufacturing_type: 'laser_cut',
   width_mm: 30, height_mm: 20, thickness_mm: 1.6,
   width_in: 1.18, height_in: 0.79, area_sq_in: 0.93,
   hole_count: 4,
@@ -55,5 +56,26 @@ describe('SEO helpers', () => {
   it('JSON-LD includes description', () => {
     const jsonLd = generateProductJsonLd(testPart);
     expect(jsonLd.description).toBe(testPart.description);
+  });
+
+  it('generates CNC Milled label for cnc_milled manufacturing type', () => {
+    const cncPart: Part = {
+      ...testPart,
+      manufacturing_type: 'cnc_milled',
+      category: 'shaft_coupler',
+    };
+    const title = generatePartTitle(cncPart);
+    expect(title).toContain('CNC Milled');
+    expect(title).not.toContain('Laser Cut');
+  });
+
+  it('generates Sheet Metal label for sheet_metal manufacturing type', () => {
+    const sheetPart: Part = {
+      ...testPart,
+      manufacturing_type: 'sheet_metal',
+      category: 'u_channel',
+    };
+    const title = generatePartTitle(sheetPart);
+    expect(title).toContain('Sheet Metal');
   });
 });

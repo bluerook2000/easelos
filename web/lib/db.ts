@@ -25,6 +25,7 @@ interface PartRow {
   category: string;
   name: string;
   description: string;
+  manufacturing_type: string;
   width_mm: number;
   height_mm: number;
   thickness_mm: number;
@@ -48,6 +49,7 @@ function rowToPart(row: PartRow): Part {
     category: row.category,
     name: row.name,
     description: row.description,
+    manufacturing_type: row.manufacturing_type || 'laser_cut',
     width_mm: row.width_mm,
     height_mm: row.height_mm,
     thickness_mm: row.thickness_mm,

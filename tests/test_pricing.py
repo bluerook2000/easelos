@@ -66,3 +66,33 @@ def test_get_all_prices_returns_all_6_tiers():
         assert tier in prices
         assert isinstance(prices[tier], float)
         assert prices[tier] > 0
+
+
+def test_material_multiplier_titanium():
+    """Titanium prices are 4x aluminum base."""
+    base = get_all_prices(2, 1.0, 1.0)  # simple, small
+    ti = get_all_prices(2, 1.0, 1.0, material_multiplier=4.0)
+    for qty in base:
+        assert ti[qty] == round(base[qty] * 4.0, 2)
+
+
+def test_process_multiplier_cnc():
+    """CNC prices are 2.5x base."""
+    base = get_all_prices(2, 1.0, 1.0)
+    cnc = get_all_prices(2, 1.0, 1.0, process_multiplier=2.5)
+    for qty in base:
+        assert cnc[qty] == round(base[qty] * 2.5, 2)
+
+
+def test_combined_multipliers():
+    """Material and process multipliers stack multiplicatively."""
+    base = get_all_prices(2, 1.0, 1.0)
+    combined = get_all_prices(2, 1.0, 1.0, material_multiplier=2.0, process_multiplier=1.5)
+    for qty in base:
+        assert combined[qty] == round(base[qty] * 2.0 * 1.5, 2)
+
+
+def test_default_multipliers_unchanged():
+    """Without multipliers, prices are identical to before."""
+    prices = get_all_prices(2, 1.0, 1.0)
+    assert prices[1] == 12.88  # simple/small/1 — exact Ponoko value

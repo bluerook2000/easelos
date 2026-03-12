@@ -9,7 +9,6 @@ import ezdxf
 from pipeline.categories import ALL_GENERATORS, GENERATOR_MAP
 from pipeline.manifest import Manifest
 from pipeline.materials import MATERIALS
-from pipeline.part_base import METRIC_CLEARANCE
 
 
 def test_smoke_generate_all_categories(tmp_path):
@@ -53,7 +52,7 @@ def test_smoke_generate_all_categories(tmp_path):
 
             total_generated += 1
 
-    assert total_generated >= 18
+    assert total_generated >= 46
 
 
 def test_incremental_generation(tmp_path):
@@ -73,17 +72,17 @@ def test_incremental_generation(tmp_path):
 
 
 def test_total_variant_count():
-    """Verify we meet the 500+ parts target."""
+    """Verify we meet the 10,000+ parts target."""
     total = 0
     for gen in ALL_GENERATORS:
         count = len(list(gen.enumerate_variants()))
         assert count >= 50, f"{gen.category} has only {count} variants (need >= 50)"
         total += count
-    assert total >= 500, f"Total variants: {total} (need >= 500)"
+    assert total >= 10000, f"Total variants: {total} (need >= 10000)"
 
 
 def test_metadata_schema(tmp_path):
-    """Verify JSON metadata has all 19 required fields for one part."""
+    """Verify JSON metadata has all 20 required fields for one part."""
     gen = ALL_GENERATORS[0]
     params = next(gen.enumerate_variants())
 
@@ -99,11 +98,12 @@ def test_metadata_schema(tmp_path):
         hole_count=params.hole_count,
         hole_specs=[{"size": h.label, "diameter_mm": h.diameter_mm, "x_mm": h.x_mm, "y_mm": h.y_mm} for h in params.hole_specs],
         material_slug=params.material_slug,
+        manufacturing_type="laser_cut",
     )
 
-    # All 19 required fields
+    # All 20 required fields
     required_fields = [
-        "part_id", "category", "name", "description",
+        "part_id", "category", "name", "description", "manufacturing_type",
         "width_mm", "height_mm", "thickness_mm",
         "width_in", "height_in", "area_sq_in",
         "hole_count", "hole_specs",
@@ -114,24 +114,29 @@ def test_metadata_schema(tmp_path):
     for field in required_fields:
         assert field in meta, f"Missing: {field}"
 
-    # Pricing for 3 materials x 6 quantities
-    for mat in ["aluminum", "steel", "stainless"]:
-        assert mat in meta["pricing"]
+    # Pricing for 14 materials (laser-cut) x 6 quantities
+    from pipeline.materials import get_laser_cut_materials
+    for mat_slug in get_laser_cut_materials():
+        assert mat_slug in meta["pricing"], f"Missing pricing for {mat_slug}"
         for qty in [1, 10, 100, 500, 1000, 10000]:
-            assert qty in meta["pricing"][mat]
+            assert qty in meta["pricing"][mat_slug]
+    assert len(meta["pricing"]) == 14  # all materials for laser-cut
 
     # JSON serializable
     json.dumps(meta)
 
 
-def test_all_9_categories_registered():
-    """ALL_GENERATORS has 9 entries."""
-    assert len(ALL_GENERATORS) == 9
-    assert len(GENERATOR_MAP) == 9
+def test_all_23_categories_registered():
+    """ALL_GENERATORS has 23 entries."""
+    assert len(ALL_GENERATORS) == 23
+    assert len(GENERATOR_MAP) == 23
     expected = {
         "mounting_bracket", "motor_mount", "gusset_plate",
         "base_plate", "standoff", "sensor_mount",
         "electronics_panel", "bearing_plate", "cable_bracket",
+        "hinge", "flange", "slotted_bracket", "enclosure_panel", "heatsink_plate",
+        "u_channel", "z_bracket", "box_enclosure", "din_rail_bracket",
+        "shaft_coupler", "motor_adapter", "t_slot_nut", "bearing_block", "spacer_block",
     }
     assert set(GENERATOR_MAP.keys()) == expected
 
@@ -156,3 +161,31 @@ def test_ponoko_constraint_no_undersized_holes():
                     f"{hole.diameter_mm}mm < min feature size {mat.min_feature_size_mm}mm "
                     f"for {mat.name}"
                 )
+
+
+def test_smoke_3d_parts_export_glb(tmp_path):
+    """CNC and sheet metal parts export glTF files."""
+    from pipeline.categories.shaft_coupler import ShaftCouplerGenerator
+    from pipeline.exporter import export_glb
+    gen = ShaftCouplerGenerator()
+    params = next(gen.enumerate_variants())
+    solid = gen.generate_solid(params)
+    glb_path = str(tmp_path / "model.glb")
+    result = export_glb(solid, glb_path)
+    assert result is True
+    assert os.path.exists(glb_path)
+    assert os.path.getsize(glb_path) > 100
+
+
+def test_pricing_multipliers_applied():
+    """Different materials produce different prices in metadata."""
+    from pipeline.metadata import generate_metadata
+    meta = generate_metadata(
+        part_id="test", category="test", name="Test", description="Test",
+        width_mm=50, height_mm=30, thickness_mm=3.0,
+        hole_count=2, hole_specs=[], material_slug="aluminum",
+        manufacturing_type="laser_cut",
+    )
+    # Titanium should be 4x aluminum
+    assert meta["pricing"]["titanium"][1] > meta["pricing"]["aluminum"][1]
+    assert abs(meta["pricing"]["titanium"][1] / meta["pricing"]["aluminum"][1] - 4.0) < 0.01

@@ -10,6 +10,7 @@ export function createSchema(db: Database.Database): void {
       category TEXT NOT NULL,
       name TEXT NOT NULL,
       description TEXT NOT NULL,
+      manufacturing_type TEXT NOT NULL DEFAULT 'laser_cut',
       width_mm REAL NOT NULL,
       height_mm REAL NOT NULL,
       thickness_mm REAL NOT NULL,
@@ -43,7 +44,7 @@ export function createSchema(db: Database.Database): void {
 export function ingestFromDirectory(db: Database.Database, outputDir: string): number {
   const insertPart = db.prepare(`
     INSERT OR REPLACE INTO parts (
-      part_id, category, name, description,
+      part_id, category, name, description, manufacturing_type,
       width_mm, height_mm, thickness_mm,
       width_in, height_in, area_sq_in,
       hole_count, hole_specs_json,
@@ -51,7 +52,7 @@ export function ingestFromDirectory(db: Database.Database, outputDir: string): n
       complexity, size_category,
       pricing_json, files_json
     ) VALUES (
-      @part_id, @category, @name, @description,
+      @part_id, @category, @name, @description, @manufacturing_type,
       @width_mm, @height_mm, @thickness_mm,
       @width_in, @height_in, @area_sq_in,
       @hole_count, @hole_specs_json,
@@ -94,6 +95,7 @@ export function ingestFromDirectory(db: Database.Database, outputDir: string): n
           category: meta.category,
           name: meta.name,
           description: meta.description,
+          manufacturing_type: meta.manufacturing_type || 'laser_cut',
           width_mm: meta.width_mm,
           height_mm: meta.height_mm,
           thickness_mm: meta.thickness_mm,

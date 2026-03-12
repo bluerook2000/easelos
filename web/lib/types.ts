@@ -16,6 +16,7 @@ export interface Part {
   category: string;
   name: string;
   description: string;
+  manufacturing_type: string;
   width_mm: number;
   height_mm: number;
   thickness_mm: number;
@@ -36,6 +37,7 @@ export interface Part {
     dxf: string;
     png: string;
     metadata: string;
+    glb?: string;
   };
 }
 

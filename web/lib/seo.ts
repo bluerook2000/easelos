@@ -1,5 +1,5 @@
 import type { Part } from './types';
-import { CATEGORY_LABELS } from './constants';
+import { CATEGORY_LABELS, MANUFACTURING_TYPE_LABELS } from './constants';
 
 export function generatePartTitle(part: Part): string {
   const materialShort = part.material_name.split(' ').pop() || part.material;
@@ -8,7 +8,8 @@ export function generatePartTitle(part: Part): string {
   const holes = part.hole_count > 0
     ? ` ${part.hole_count}-Hole`
     : '';
-  return `${materialShort} ${partType} ${specs}${holes} | Laser Cut | Easelos`;
+  const mfgLabel = MANUFACTURING_TYPE_LABELS[part.manufacturing_type] || 'Laser Cut';
+  return `${materialShort} ${partType} ${specs}${holes} | ${mfgLabel} | Easelos`;
 }
 
 export function generatePartDescription(part: Part): string {

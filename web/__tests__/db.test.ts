@@ -33,6 +33,7 @@ describe('Database queries', () => {
       fs.writeFileSync(path.join(dir, 'metadata.json'), JSON.stringify({
         ...p,
         description: `Test ${p.name}`,
+        manufacturing_type: 'laser_cut',
         thickness_mm: 1.6, width_in: 1.0, height_in: 1.0, area_sq_in: 1.0,
         hole_count: 2, hole_specs: [],
         material_name: p.material, weight_estimate_g: 1.0,

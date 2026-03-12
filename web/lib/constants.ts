@@ -8,6 +8,20 @@ export const CATEGORY_NAMES: Record<string, string> = {
   electronics_panel: 'Electronics Panels',
   bearing_plate: 'Bearing Plates',
   cable_bracket: 'Cable Brackets',
+  hinge: 'Hinges',
+  flange: 'Flanges',
+  slotted_bracket: 'Slotted Brackets',
+  enclosure_panel: 'Enclosure Panels',
+  heatsink_plate: 'Heatsink Plates',
+  u_channel: 'U-Channels',
+  z_bracket: 'Z-Brackets',
+  box_enclosure: 'Box Enclosures',
+  din_rail_bracket: 'DIN Rail Brackets',
+  shaft_coupler: 'Shaft Couplers',
+  motor_adapter: 'Motor Adapters',
+  t_slot_nut: 'T-Slot Nuts',
+  bearing_block: 'Bearing Blocks',
+  spacer_block: 'Spacer Blocks',
 };
 
 export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
@@ -20,6 +34,20 @@ export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   electronics_panel: 'Enclosure panels and DIN rail mount plates for electronics.',
   bearing_plate: '608 and 6201 bearing mount plates with bore and bolt circle holes.',
   cable_bracket: 'Cable clip and guide brackets for wire management.',
+  hinge: 'Piano and butt hinges for doors, panels, and enclosures.',
+  flange: 'Pipe flanges with bolt circle patterns for mechanical connections.',
+  slotted_bracket: 'Adjustment brackets with elongated slots for precise positioning.',
+  enclosure_panel: 'Front and rear panels for electronic enclosures with cutouts.',
+  heatsink_plate: 'Finned plates for passive thermal management.',
+  u_channel: 'U-shaped channels for structural framing and cable management.',
+  z_bracket: 'Z-shaped brackets for offset mounting and panel connections.',
+  box_enclosure: 'Open-top box enclosures for electronics and components.',
+  din_rail_bracket: 'DIN rail mounting brackets for industrial automation equipment.',
+  shaft_coupler: 'Rigid cylindrical couplers for connecting shafts.',
+  motor_adapter: 'NEMA motor adapter plates with pilot bore and bolt patterns.',
+  t_slot_nut: 'Drop-in T-slot nuts for aluminum extrusion framing.',
+  bearing_block: 'Pillow block bearing housings with bore and mounting holes.',
+  spacer_block: 'Precision spacer blocks with through-holes.',
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {
@@ -32,12 +60,43 @@ export const CATEGORY_LABELS: Record<string, string> = {
   electronics_panel: 'Electronics Panel',
   bearing_plate: 'Bearing Plate',
   cable_bracket: 'Cable Bracket',
+  hinge: 'Hinge',
+  flange: 'Flange',
+  slotted_bracket: 'Slotted Bracket',
+  enclosure_panel: 'Enclosure Panel',
+  heatsink_plate: 'Heatsink Plate',
+  u_channel: 'U-Channel',
+  z_bracket: 'Z-Bracket',
+  box_enclosure: 'Box Enclosure',
+  din_rail_bracket: 'DIN Rail Bracket',
+  shaft_coupler: 'Shaft Coupler',
+  motor_adapter: 'Motor Adapter',
+  t_slot_nut: 'T-Slot Nut',
+  bearing_block: 'Bearing Block',
+  spacer_block: 'Spacer Block',
 };
 
 export const MATERIAL_LABELS: Record<string, string> = {
   aluminum: '5052-H32 Aluminum',
   steel: 'A1011 Carbon Steel',
   stainless: '304 Stainless Steel',
+  brass: 'C260 Brass',
+  copper: 'C110 Copper',
+  titanium: 'Grade 2 Titanium',
+  galvanized: 'Galvanized Steel',
+  spring_steel: '1095 Spring Steel',
+  acrylic: 'Cast Acrylic',
+  delrin: 'Delrin (POM)',
+  nylon: 'Nylon 6/6',
+  polycarbonate: 'Polycarbonate',
+  hdpe: 'HDPE',
+  abs: 'ABS',
+};
+
+export const MANUFACTURING_TYPE_LABELS: Record<string, string> = {
+  laser_cut: 'Laser Cut',
+  cnc_milled: 'CNC Milled',
+  sheet_metal: 'Sheet Metal',
 };
 
 export const QUANTITIES = ['1', '10', '100', '500', '1000', '10000'] as const;

@@ -24,6 +24,7 @@ describe('Data ingestion', () => {
       category: 'mounting_bracket',
       name: '5052-H32 Aluminum Flat Bracket 30x20mm 4xM5',
       description: 'Laser-cut flat mounting bracket.',
+      manufacturing_type: 'laser_cut',
       width_mm: 30, height_mm: 20, thickness_mm: 1.6,
       width_in: 1.18, height_in: 0.79, area_sq_in: 0.93,
       hole_count: 4,
@@ -43,6 +44,7 @@ describe('Data ingestion', () => {
       category: 'motor_mount',
       name: 'A1011 Steel NEMA 17 Motor Mount 42x42mm',
       description: 'Laser-cut steel motor mount plate.',
+      manufacturing_type: 'laser_cut',
       width_mm: 42, height_mm: 42, thickness_mm: 1.52,
       width_in: 1.65, height_in: 1.65, area_sq_in: 2.72,
       hole_count: 4,
@@ -98,6 +100,24 @@ describe('Data ingestion', () => {
 
     const parts = db.prepare('SELECT * FROM parts').all();
     expect(parts).toHaveLength(2);
+    db.close();
+  });
+
+  it('stores manufacturing_type column', () => {
+    const db = new Database(dbPath);
+    createSchema(db);
+    ingestFromDirectory(db, path.join(tmpDir, 'output'));
+    const row = db.prepare('SELECT manufacturing_type FROM parts WHERE part_id = ?').get('bracket-flat-30x20x1.6-4xM5-aluminum') as { manufacturing_type: string };
+    expect(row.manufacturing_type).toBe('laser_cut');
+    db.close();
+  });
+
+  it('schema has manufacturing_type column', () => {
+    const db = new Database(dbPath);
+    createSchema(db);
+    const cols = db.prepare("PRAGMA table_info('parts')").all() as Array<{ name: string }>;
+    const colNames = cols.map((c) => c.name);
+    expect(colNames).toContain('manufacturing_type');
     db.close();
   });
 

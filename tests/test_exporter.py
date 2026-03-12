@@ -1,8 +1,9 @@
 # tests/test_exporter.py
 import os
+import struct
 import pytest
 import cadquery as cq
-from pipeline.exporter import export_step, export_svg, export_dxf, export_png
+from pipeline.exporter import export_step, export_svg, export_dxf, export_png, export_glb
 
 
 def _make_test_solid(thickness: float = 3.0) -> cq.Workplane:
@@ -107,3 +108,50 @@ class TestPngExport:
         with open(png_path, "rb") as f:
             header = f.read(8)
         assert header[:4] == b'\x89PNG'
+
+
+class TestGlbExport:
+    def test_creates_file(self, tmp_path):
+        solid = _make_test_solid()
+        path = str(tmp_path / "model.glb")
+        export_glb(solid, path)
+        assert os.path.exists(path)
+        assert os.path.getsize(path) > 0
+
+    def test_glb_magic_bytes(self, tmp_path):
+        solid = _make_test_solid()
+        path = str(tmp_path / "model.glb")
+        export_glb(solid, path)
+        with open(path, "rb") as f:
+            magic = f.read(4)
+        assert magic == b"glTF"
+
+    def test_glb_has_valid_structure(self, tmp_path):
+        solid = _make_test_solid()
+        path = str(tmp_path / "model.glb")
+        export_glb(solid, path)
+        with open(path, "rb") as f:
+            data = f.read()
+        # Header: magic(4) + version(4) + length(4)
+        magic, version, length = struct.unpack_from("<4sII", data, 0)
+        assert magic == b"glTF"
+        assert version == 2
+        assert length == len(data)
+        # JSON chunk header
+        json_len, json_type = struct.unpack_from("<II", data, 12)
+        assert json_type == 0x4E4F534A  # "JSON"
+        # Parse the JSON chunk
+        import json as json_mod
+        json_data = json_mod.loads(data[20:20 + json_len])
+        assert "meshes" in json_data
+        assert len(json_data["meshes"]) > 0
+        assert "accessors" in json_data
+        assert "bufferViews" in json_data
+
+    def test_glb_degenerate_solid_skips(self, tmp_path):
+        """export_glb returns False for degenerate geometry."""
+        solid = cq.Workplane("XY").box(0.001, 0.001, 0.001)
+        path = str(tmp_path / "model.glb")
+        result = export_glb(solid, path)
+        # Should either succeed with tiny mesh or return False gracefully
+        assert isinstance(result, bool)
