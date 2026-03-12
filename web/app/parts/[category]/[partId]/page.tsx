@@ -8,7 +8,7 @@ import PartSpecs from '@/components/PartSpecs';
 import PartCard from '@/components/PartCard';
 import BreadcrumbNav from '@/components/BreadcrumbNav';
 import ModelViewer from '@/components/ModelViewer';
-import { CATEGORY_NAMES, MANUFACTURING_TYPE_LABELS } from '@/lib/constants';
+import { CATEGORY_NAMES, MANUFACTURING_TYPE_LABELS, MATERIAL_LABELS } from '@/lib/constants';
 
 interface PageProps {
   params: { category: string; partId: string };
@@ -60,6 +60,9 @@ export default function PartDetailPage({ params }: PageProps) {
   const has3dModel = !!part.files.glb;
   const mfgLabel = MANUFACTURING_TYPE_LABELS[part.manufacturing_type] || 'Laser Cut';
 
+  // Strip material name from display title since the page offers multiple materials
+  const displayName = part.name.replace(part.material_name, '').replace(/^\s+/, '');
+
   return (
     <>
       {/* JSON-LD structured data */}
@@ -72,7 +75,7 @@ export default function PartDetailPage({ params }: PageProps) {
         <BreadcrumbNav
           items={[
             { label: categoryName, href: `/parts/${part.category}/` },
-            { label: part.name },
+            { label: displayName },
           ]}
         />
 
@@ -121,7 +124,7 @@ export default function PartDetailPage({ params }: PageProps) {
 
           {/* Right: Details */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{part.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{displayName}</h1>
             <p className="mt-2 text-gray-600">{part.description}</p>
 
             {/* Pricing */}
