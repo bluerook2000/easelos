@@ -2,14 +2,13 @@ import type { Part } from './types';
 import { CATEGORY_LABELS, MANUFACTURING_TYPE_LABELS } from './constants';
 
 export function generatePartTitle(part: Part): string {
-  const materialShort = part.material_name.split(' ').pop() || part.material;
   const partType = CATEGORY_LABELS[part.category] || part.category;
   const specs = `${part.width_mm}x${part.height_mm}mm`;
   const holes = part.hole_count > 0
     ? ` ${part.hole_count}-Hole`
     : '';
   const mfgLabel = MANUFACTURING_TYPE_LABELS[part.manufacturing_type] || 'Laser Cut';
-  return `${materialShort} ${partType} ${specs}${holes} | ${mfgLabel} | Easelos`;
+  return `${partType} ${specs}${holes} | ${mfgLabel} | Easelos`;
 }
 
 export function generatePartDescription(part: Part): string {

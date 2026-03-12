@@ -25,7 +25,7 @@ const testPart: Part = {
 describe('SEO helpers', () => {
   it('generates title matching spec format', () => {
     const title = generatePartTitle(testPart);
-    expect(title).toContain('Aluminum');
+    expect(title).not.toContain('Aluminum');
     expect(title).toContain('Bracket');
     expect(title).toContain('Laser Cut');
     expect(title).toContain('Easelos');
